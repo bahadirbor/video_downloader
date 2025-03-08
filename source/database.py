@@ -5,12 +5,13 @@ from dotenv import load_dotenv
 # importing env file
 load_dotenv(dotenv_path="../config/.env")
 
-DATABASE_PATH = os.getenv("YOUR_DATABASE_URL")
+DATABASE_PATH = str(os.getenv("YOUR_DATABASE_URL"))
 
-def creating_database():
+
+def creating_database(path):
     """Creating database.
     You must execute this function in first run"""
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = sqlite3.connect(path)
     cursor = conn.cursor()
 
     # Creating database tables
@@ -23,22 +24,28 @@ def creating_database():
 
     print("Database has created")
 
-def add_channel(channel_name,channel_id):
+def add_channel(path):
     """Adding your channels"""
-    conn = sqlite3.connect(DATABASE_PATH)
+    channel_id = input("Insert channel id: ")
+    channel_name = input("Insert channel name: ")
+    conn = sqlite3.connect(path)
     cursor = conn.cursor()
 
     try:
         cursor.execute("""
             INSERT OR IGNORE INTO channels (id, name)
             VALUES (?,?)
-        """,(channel_id,channel_name))
-
+        """,(str(channel_id),str(channel_name)))
         conn.commit()
+    
     except Exception as e:
         conn.rollback()
         print(f"There is an error: {e}")
+        
     finally:
         conn.close()
 
     print("The channel has added!")
+
+
+creating_database(DATABASE_PATH)
