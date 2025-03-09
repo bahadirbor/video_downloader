@@ -11,11 +11,12 @@ DATABASE_PATH = str(os.getenv("YOUR_DATABASE_URL"))
 def creating_database(path):
     """Creating database.
     You must execute this function in first run"""
+    SCHEMA = str(os.getenv("DATABASE_SCHEMA"))
     conn = sqlite3.connect(path)
     cursor = conn.cursor()
 
     # Creating database tables
-    with open("../data/database_schema.sql", "r") as sql_codes:
+    with open(SCHEMA, "r") as sql_codes:
         sql_script = sql_codes.read()
         cursor.executescript(sql_script)
 
