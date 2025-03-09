@@ -1,0 +1,4 @@
+{
+  "subject": "{channel_name} Published Video",
+  "body": "Hello\n{channel_name} has updated new video.\nVideo Name: {video_name}\nPublish Date: {publish_date}\nPublish Time: {publish_time}"
+}
