@@ -49,4 +49,14 @@ def add_channel(path):
     print("The channel has added!")
 
 
-creating_database(DATABASE_PATH)
+def get_channel_ids(database_path):
+    try:
+        conn = sqlite3.connect(database_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM channels")
+        rows = cursor.fetchall()
+        channel_ids = [row[0] for row in rows]
+        conn.close()
+        return channel_ids
+    except Exception as e:
+        print("There is an exception: " + str(e))
