@@ -1,7 +1,7 @@
 import sqlite3
 import os
 import logging
-import youtube_dl
+import yt_dlp
 
 logging.basicConfig(
     level=logging.INFO,
@@ -12,7 +12,9 @@ logging.basicConfig(
     ]
 )
 
+
 def get_video_id(database_path):
+    """Getting video id's from database"""
     try:
         conn = sqlite3.connect(database_path)
         cursor = conn.cursor()
@@ -25,5 +27,25 @@ def get_video_id(database_path):
     except Exception as e:
         logging.error("Veri tabanından veri id çekilirken hata: %s", e)
         return []
+
+
+def download_video(video_id, folder_path):
+    """Videos download in our folder"""
+    video_url = f"https://www.youtube.com/watch?v={video_id}"
+    ydl_opts = {
+        'outtmpl': os.path.join(folder_path, '%(title)s-%(id)s.%(ext)s'),
+        'format': 'bestvideo[ext=webm][height<=1080]+bestaudio[ext=webm]/best[ext=webm][height<=1080]',
+        'nonplaylist': True,
+        'ffmpeg_location': 'C:\\ffmpeg\\bin\\',
+        'merge_output_format': 'webm',
+    }
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            logging.info("Download is starting: %s", video_id)
+            ydl.download([video_url])
+            logging.info("Download has completed: %s", video_id)
+    except Exception as e:
+        logging.error("An error occured when downloading the video (%s): %s", video_id, e)
+
 
 

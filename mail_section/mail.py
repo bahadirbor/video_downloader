@@ -17,6 +17,7 @@ logging.basicConfig(
     filemode='a'
 )
 
+
 def load_template_json(template_file):
     try:
         with open(template_file, "r", encoding="utf-8") as file:

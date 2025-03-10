@@ -50,6 +50,7 @@ def add_channel(path):
 
 
 def get_channel_ids(database_path):
+    """Getting channel id infos from database"""
     try:
         conn = sqlite3.connect(database_path)
         cursor = conn.cursor()
