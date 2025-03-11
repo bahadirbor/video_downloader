@@ -1,5 +1,7 @@
 from source import api_integration
-import source.database
+from source import database
+from source import download
+from mail_section import mail
 import os
 from dotenv import load_dotenv
 
@@ -7,26 +9,64 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path="config/.env")
 DATABASE_PATH = str(os.getenv("YOUR_DATABASE_URL_MAIN"))
 YOUTUBE_API = str(os.getenv("YOUR_YOUTUBE_API_KEY"))
+SENDER_MAIL_ADDRESS = str(os.getenv("YOUR_EMAIL_USER"))
+SENDER_MAIL_PASSWORD = str(os.getenv("YOUR_MAIL_PASSWORD"))
+RECEIVER_MAIL_ADDRESS = str(os.getenv("YOUR_RECEIVER_MAIL"))
+TEMPLATE_PATH = str(os.getenv("NEW_VIDEO_TEMPLATE_PATH"))
+DOWNLOAD_DIR = str(os.getenv("VIDEO_DOWNLOAD_DIR"))
 
 if __name__ == "__main__":
     print("Welcome\n")
     while True:
-        print("Press 1 for add new channel from database")
-        print("Press 2 for start the program")
+        print("Press 1 for database operations")
+        print("Press 2 for starting program")
         print("Press 0 for exit")
         decision = input("Make your choice: ")
 
-        if decision == "1":
-            """Add new youtube channel"""
-            source.database.add_channel(DATABASE_PATH)
-        elif decision == "2":
-            """Scraping new videos and insert to database"""
-            channels = api_integration.get_channels(DATABASE_PATH)
-            for channel_id in channels:
-                videos = api_integration.get_latest_videos(channel_id, YOUTUBE_API)
-                api_integration.save_to_database(videos,channel_id, DATABASE_PATH)
-                channel_name = api_integration.get_channel_name(channel_id, DATABASE_PATH)
-                print(f"{channel_name} video list has updated!")
-        elif decision == "0":
-            break
+        match decision:
+            case "1":
+                """Database Operations"""
+                print("1.Add Channel\n2.Delete Channel")
+                a = input("Input decision number:")
+                if a == "1":
+                    database.add_channel(DATABASE_PATH)
+                elif a == "2":
+                    database.delete_channel(DATABASE_PATH)
+
+            case "2":
+                """Video scraping, sending information from mail, download the videos"""
+                channels = api_integration.get_channels(DATABASE_PATH)
+                for channel_id in channels:
+                    videos = api_integration.get_latest_videos(channel_id, YOUTUBE_API)
+                    api_integration.save_to_database(videos, channel_id, DATABASE_PATH)
+                    channel_name = api_integration.get_channel_name(channel_id, DATABASE_PATH)
+                    print(f"{channel_name} video list has updated!")
+
+                try:
+                    template = mail.load_template_json(TEMPLATE_PATH)
+
+                except:
+                    exit("Şablon dosyası yüklenemedi, program sonlandırılıyor.")
+
+                channel_id_nums = database.get_channel_ids(DATABASE_PATH)
+                for channel_id in channel_id_nums:
+                    video_data = mail.fetch_video_data(DATABASE_PATH, str(channel_id))
+                    if not video_data:
+                        exit("Veritabanında video verisi bulunamadı, program sonlandırılıyor.")
+                    mail.send_mail(template, SENDER_MAIL_ADDRESS, SENDER_MAIL_PASSWORD, RECEIVER_MAIL_ADDRESS,
+                                   video_data)
+
+                video_ids = download.get_video_id(DATABASE_PATH)
+
+                for video_id in video_ids:
+                    download.download_video(video_id, DOWNLOAD_DIR)
+                    database.change_download_status(video_id, DATABASE_PATH)
+
+            case "0":
+                break
+
+
+
+
+
 
