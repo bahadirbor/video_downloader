@@ -1,5 +1,5 @@
 from source import api_integration
-from source import database
+from source.database import Database
 from source import download
 from mail_section import mail
 import os
@@ -14,6 +14,7 @@ SENDER_MAIL_PASSWORD = str(os.getenv("YOUR_MAIL_PASSWORD"))
 RECEIVER_MAIL_ADDRESS = str(os.getenv("YOUR_RECEIVER_MAIL"))
 TEMPLATE_PATH = str(os.getenv("NEW_VIDEO_TEMPLATE_PATH"))
 DOWNLOAD_DIR = str(os.getenv("VIDEO_DOWNLOAD_DIR"))
+DATABASE_SCHEMA = str(os.getenv("DATABASE_SCHEMA"))
 
 if __name__ == "__main__":
     print("Welcome\n")
@@ -26,12 +27,13 @@ if __name__ == "__main__":
         match decision:
             case "1":
                 """Database Operations"""
+                database = Database(DATABASE_PATH, DATABASE_SCHEMA)
                 print("1.Add Channel\n2.Delete Channel")
                 a = input("Input decision number:")
                 if a == "1":
-                    database.add_channel(DATABASE_PATH)
+                    database.add_channel()
                 elif a == "2":
-                    database.delete_channel(DATABASE_PATH)
+                    database.delete_channel()
 
             case "2":
                 """Video scraping, sending information from mail, download the videos"""
