@@ -37,6 +37,7 @@ if __name__ == "__main__":
 
             case "2":
                 """Video scraping, sending information from mail, download the videos"""
+                database = Database(DATABASE_PATH, DATABASE_SCHEMA)
                 channels = api_integration.get_channels(DATABASE_PATH)
                 for channel_id in channels:
                     videos = api_integration.get_latest_videos(channel_id, YOUTUBE_API)
@@ -50,7 +51,7 @@ if __name__ == "__main__":
                 except:
                     exit("Şablon dosyası yüklenemedi, program sonlandırılıyor.")
 
-                channel_id_nums = database.get_channel_ids(DATABASE_PATH)
+                channel_id_nums = database.get_channel_ids()
                 for channel_id in channel_id_nums:
                     video_data = mail.fetch_video_data(DATABASE_PATH, str(channel_id))
                     if not video_data:
@@ -62,7 +63,7 @@ if __name__ == "__main__":
 
                 for video_id in video_ids:
                     download.download_video(video_id, DOWNLOAD_DIR)
-                    database.change_download_status(video_id, DATABASE_PATH)
+                    database.change_download_status(video_id)
 
             case "0":
                 break
