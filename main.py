@@ -1,7 +1,7 @@
 from source import api_integration
 from source.database import Database
 from source import download
-from mail_section import mail
+from mail_section.mail import Mail
 import os
 from dotenv import load_dotenv
 
@@ -38,6 +38,7 @@ if __name__ == "__main__":
             case "2":
                 """Video scraping, sending information from mail, download the videos"""
                 database = Database(DATABASE_PATH, DATABASE_SCHEMA)
+                mail = Mail(database.database)
                 channels = api_integration.get_channels(DATABASE_PATH)
                 for channel_id in channels:
                     videos = api_integration.get_latest_videos(channel_id, YOUTUBE_API)
@@ -53,7 +54,7 @@ if __name__ == "__main__":
 
                 channel_id_nums = database.get_channel_ids()
                 for channel_id in channel_id_nums:
-                    video_data = mail.fetch_video_data(DATABASE_PATH, str(channel_id))
+                    video_data = mail.fetch_video_data(str(channel_id))
                     if not video_data:
                         exit("Veritabanında video verisi bulunamadı, program sonlandırılıyor.")
                     mail.send_mail(template, SENDER_MAIL_ADDRESS, SENDER_MAIL_PASSWORD, RECEIVER_MAIL_ADDRESS,
