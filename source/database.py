@@ -10,9 +10,9 @@ DATABASE_SCHEMA = str(os.getenv("DATABASE_SCHEMA"))
 
 
 class Database:
-    def __init__(self, DATABASE_PATH, DATABASE_SCHEMA):
-        self.database = DATABASE_PATH
-        self.database_schema = str(DATABASE_SCHEMA)
+    def __init__(self, database_path, database_schema = DATABASE_SCHEMA):
+        self.database = database_path
+        self.database_schema = str(database_schema)
 
     def creating_database(self):
         """Creating database.

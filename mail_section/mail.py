@@ -18,7 +18,11 @@ logging.basicConfig(
 )
 
 class Mail:
-    def load_template_json(template_file):
+    def __init__(self, database_path):
+        self.database = database_path
+
+    def load_template_json(self, template_file):
+        """Load template file in templates folder"""
         try:
             with open(template_file, "r", encoding="utf-8") as file:
                 template = json.load(file)
@@ -28,9 +32,10 @@ class Mail:
             logging.error("An error occurred: "+str(e))
             raise
 
-    def fetch_video_data(db_file_path, channel_id):
+    def fetch_video_data(self, channel_id):
+        """Get video datas (name, video title, published time) from database"""
         try:
-            conn = sqlite3.connect(db_file_path)
+            conn = sqlite3.connect(self.database)
             cursor = conn.cursor()
             cursor.execute("""
             SELECT name, title, published_at FROM videos
@@ -38,7 +43,7 @@ class Mail:
             WHERE videos.channel_id = (?)
             ORDER BY videos.published_at DESC
             """, (channel_id,))
-            row = cursor.fetchone()
+            row = cursor.fetchone() # Import video datas from database in a tuple
             conn.close()
             if row:
                 logging.info("Video data was extracted from the database.")
@@ -57,7 +62,8 @@ class Mail:
             logging.error("Error while retrieving video data from database: " + str(e))
             return None
 
-    def send_mail(template, sender_mail, sender_password, receiver_mail, context: dict):
+    def send_mail(self, template, sender_mail, sender_password, receiver_mail, context: dict):
+        """Sending information mail to receiver mail address"""
         try:
             subject_template = template["subject"]
             body_template = template["body"]
