@@ -1,9 +1,9 @@
-from source import api_integration
-from source.database import Database
-from source import download
-from mail_section.mail import Mail
 import os
 from dotenv import load_dotenv
+from source import api_integration
+from source.database import Database
+from source.download import Download
+from mail_section.mail import Mail
 
 
 load_dotenv(dotenv_path="config/.env")
@@ -15,6 +15,7 @@ RECEIVER_MAIL_ADDRESS = str(os.getenv("YOUR_RECEIVER_MAIL"))
 TEMPLATE_PATH = str(os.getenv("NEW_VIDEO_TEMPLATE_PATH"))
 DOWNLOAD_DIR = str(os.getenv("VIDEO_DOWNLOAD_DIR"))
 DATABASE_SCHEMA = str(os.getenv("DATABASE_SCHEMA"))
+
 
 if __name__ == "__main__":
     print("Welcome\n")
@@ -40,6 +41,7 @@ if __name__ == "__main__":
                 database = Database(DATABASE_PATH, DATABASE_SCHEMA)
                 mail = Mail(database.database)
                 channels = api_integration.get_channels(DATABASE_PATH)
+                download = Download(database.database)
                 for channel_id in channels:
                     videos = api_integration.get_latest_videos(channel_id, YOUTUBE_API)
                     api_integration.save_to_database(videos, channel_id, DATABASE_PATH)
@@ -60,7 +62,7 @@ if __name__ == "__main__":
                     mail.send_mail(template, SENDER_MAIL_ADDRESS, SENDER_MAIL_PASSWORD, RECEIVER_MAIL_ADDRESS,
                                    video_data)
 
-                video_ids = download.get_video_id(DATABASE_PATH)
+                video_ids = download.get_video_id()
 
                 for video_id in video_ids:
                     download.download_video(video_id, DOWNLOAD_DIR)
