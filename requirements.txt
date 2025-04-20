@@ -1,4 +1,4 @@
-yt-dlp==2025.2.19
+yt-dlp==2025.3.31
 google-api-python-client==2.162.0
 yagmail==0.15.293
 python-dotenv==1.0.1
