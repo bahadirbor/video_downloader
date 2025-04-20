@@ -1,6 +1,18 @@
-## Youtube Video Downloader
+## Youtube Video Downloader v2
 
 This project aims to develop a system that automatically sends email notifications when selected YouTube channels upload a new video or go live, and downloads the recorded video after the live session ends. The system uses the **YouTube Data API** to monitor channel statuses and implements core functionalities using **Python**. Data is managed via an **SQLite** database.
+
+### Why an OOP version?
+
+While the functional version works fine, it can become harder to maintain as the project grows.  
+Refactoring it into an object-oriented structure helps demonstrate:
+
+- Code organization
+- Separation of concerns
+- Reusability
+- Scalability
+
+It’s also a great exercise to show flexibility in thinking as a developer.
 
 ### Features
 

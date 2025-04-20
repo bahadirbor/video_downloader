@@ -1,0 +1,4 @@
+{
+  "subject": "{channel_name}'s {video_name} downloaded",
+  "body": "Hello\nVideo Name: {video_name} has downloaded on your computer\nPublish Date: {publish_date}\nPublish Time: {publish_time}"
+}
