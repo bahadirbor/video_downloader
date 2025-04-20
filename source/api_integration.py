@@ -23,51 +23,55 @@ def check_api_key():
     except Exception as e:
         print("There is an error: ", e)
 
+class Api:
+    def __init__(self, database_path, developer_api_key):
+        self.database = database_path
+        self.developer_api_key = developer_api_key
 
-def get_channels(path):
-    """Get channels from database"""
-    conn = sqlite3.connect(path)
-    cursor = conn.cursor()
-    cursor.execute("SELECT id FROM channels")
-    channels = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return channels
+    def get_channels(self):
+        """Get channels from database"""
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM channels")
+        channels = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return channels
 
-def get_channel_name(channel_id,path):
-    conn = sqlite3.connect(path)
-    cursor = conn.cursor()
-    cursor.execute("SELECT name FROM channels WHERE id = ?",(channel_id,))
-    name = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return name[0]
+    def get_channel_name(self, channel_id):
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM channels WHERE id = ?", (channel_id,))
+        name = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return name[0]
 
-def get_latest_videos(channel_id, api):
-    """Get last videos from our channel list"""
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api)
-    request = youtube.search().list(
-        part="id,snippet",
-        channelId = channel_id,
-        order = "date",
-        maxResults = 3,
-    )
-    response = request.execute()
-    return response.get("items",[])
+    def get_latest_videos(self, channel_id):
+        """Get last videos from our channel list"""
+        youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=self.developer_api_key)
+        request = youtube.search().list(
+            part="id,snippet",
+            channelId=channel_id,
+            order="date",
+            maxResults=3,
+        )
+        response = request.execute()
+        return response.get("items", [])
 
-def save_to_database(videos, channel_id, path):
-    """Save video information to database"""
-    conn = sqlite3.connect(path)
-    cursor = conn.cursor()
+    def save_to_database(self, videos, channel_id):
+        """Save video information to database"""
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
 
-    for video in videos:
-        video_id = video["id"].get("videoId", video["id"].get("playlistId",""))
-        title = video["snippet"]["title"]
-        published_at = video["snippet"]["publishedAt"]
+        for video in videos:
+            video_id = video["id"].get("videoId", video["id"].get("playlistId", ""))
+            title = video["snippet"]["title"]
+            published_at = video["snippet"]["publishedAt"]
 
-        cursor.execute("""
-            INSERT OR IGNORE INTO videos (id,channel_id,title,published_at)
-            VALUES (?,?,?,?)
-        """,(video_id,channel_id,title,published_at))
+            cursor.execute("""
+                INSERT OR IGNORE INTO videos (id,channel_id,title,published_at)
+                VALUES (?,?,?,?)
+            """, (video_id, channel_id, title, published_at))
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+        conn.close()
 
