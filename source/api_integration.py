@@ -5,7 +5,6 @@ import googleapiclient.discovery
 
 load_dotenv(dotenv_path="../config/.env")
 
-"""Switch type to str for avoid errors"""
 YOUTUBE_API = str(os.getenv("YOUR_YOUTUBE_API_KEY"))
 DATABASE_PATH = str(os.getenv("YOUR_DATABASE_URL"))
 
@@ -22,6 +21,7 @@ def check_api_key():
             print("There is an issue at API key")
     except Exception as e:
         print("There is an error: ", e)
+
 
 class Api:
     def __init__(self, database_path, developer_api_key):

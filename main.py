@@ -1,12 +1,13 @@
 import os
 from dotenv import load_dotenv
-from source import api_integration
+from source.api_integration import Api
 from source.database import Database
 from source.download import Download
 from mail_section.mail import Mail
 
-
 load_dotenv(dotenv_path="config/.env")
+
+"""Convert env info types to str to avoid errors"""
 DATABASE_PATH = str(os.getenv("YOUR_DATABASE_URL_MAIN"))
 YOUTUBE_API = str(os.getenv("YOUR_YOUTUBE_API_KEY"))
 SENDER_MAIL_ADDRESS = str(os.getenv("YOUR_EMAIL_USER"))
@@ -40,12 +41,13 @@ if __name__ == "__main__":
                 """Video scraping, sending information from mail, download the videos"""
                 database = Database(DATABASE_PATH, DATABASE_SCHEMA)
                 mail = Mail(database.database)
-                channels = api_integration.get_channels(DATABASE_PATH)
+                api = Api(database.database, YOUTUBE_API)
+                channels = api.get_channels()
                 download = Download(database.database)
                 for channel_id in channels:
-                    videos = api_integration.get_latest_videos(channel_id, YOUTUBE_API)
-                    api_integration.save_to_database(videos, channel_id, DATABASE_PATH)
-                    channel_name = api_integration.get_channel_name(channel_id, DATABASE_PATH)
+                    videos = api.get_latest_videos(channel_id)
+                    api.save_to_database(videos, channel_id)
+                    channel_name = api.get_channel_name(channel_id)
                     print(f"{channel_name} video list has updated!")
 
                 try:
