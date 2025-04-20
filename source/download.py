@@ -3,11 +3,15 @@ import os
 import logging
 import yt_dlp
 
+log_dir = "..\\log"
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, "download.log")
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(message)s',
     handlers=[
-        logging.FileHandler("download.log", encoding="utf-8"),
+        logging.FileHandler(log_file, encoding="utf-8"),
         logging.StreamHandler()
     ]
 )
@@ -36,11 +40,12 @@ class Download:
         video_url = f"https://www.youtube.com/watch?v={video_id}"
         ydl_opts = {
             'outtmpl': os.path.join(folder_path, '%(title)s-%(id)s.%(ext)s'),
-            'format': 'bestvideo[ext=webm][height<=1080]+bestaudio[ext=webm]/best[ext=webm][height<=1080]',
-            'nonplaylist': True,
+            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
+            'noplaylist': True,
             'ffmpeg_location': 'C:\\ffmpeg\\bin\\',
-            'merge_output_format': 'webm',
+            'merge_output_format': 'mp4',
         }
+
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 logging.info("Download is starting: %s", video_id)
