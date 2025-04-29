@@ -5,12 +5,12 @@ from dotenv import load_dotenv
 # importing env file
 load_dotenv(dotenv_path="../config/.env")
 
-DATABASE_PATH = str(os.getenv("YOUR_DATABASE_URL"))
-DATABASE_SCHEMA = str(os.getenv("DATABASE_SCHEMA"))
+DATABASE_PATH = str("../data/video_downloader.db")
+DATABASE_SCHEMA = str("../data/database_schema.sql")
 
 
 class Database:
-    def __init__(self, database_path, database_schema = DATABASE_SCHEMA):
+    def __init__(self, database_path, database_schema):
         self.database = database_path
         self.database_schema = str(database_schema)
 
