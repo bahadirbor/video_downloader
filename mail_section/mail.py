@@ -62,7 +62,7 @@ class Mail:
             logging.error("Error while retrieving video data from database: " + str(e))
             return None
 
-    def send_mail(self, template, sender_mail, sender_password, receiver_mail, context: dict):
+    def send_mail(self, template, sender_mail, sender_password, receiver_mails: list, context: dict):
         """Sending information mail to receiver mail address"""
         try:
             subject_template = template["subject"]
@@ -73,9 +73,10 @@ class Mail:
             logging.error("Mail content cannot created" + str(e))
             return
 
-        try:
-            yag = yagmail.SMTP(sender_mail, sender_password)
-            yag.send(to=receiver_mail, subject=subject, contents=body)
-            logging.info(f"Mail has sent to {receiver_mail} with {subject} subject")
-        except Exception as e:
-            logging.error("An error occured when sending mail: " + str(e))
+        for receiver_mail in receiver_mails:
+            try:
+                yag = yagmail.SMTP(sender_mail, sender_password)
+                yag.send(to=receiver_mail, subject=subject, contents=body)
+                logging.info(f"Mail has sent to {receiver_mail} with {subject} subject")
+            except Exception as e:
+                logging.error("An error occured when sending mail to "+receiver_mail+" : " + str(e))

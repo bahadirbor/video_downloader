@@ -72,6 +72,17 @@ class Database:
         finally:
             conn.close()
 
+    def get_mail_addresses(self):
+        """Get all mail addresses from database to list"""
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT receiver_mail FROM mail_adresses
+        """)
+        rows = cursor.fetchall()
+        receivers = [row[0] for row in rows]
+        return receivers
+
     def add_channel(self):
         """Adding your channels"""
         channel_id = input("Insert channel id: ")
