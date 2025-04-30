@@ -30,6 +30,48 @@ class Database:
         conn.close()
         print("Database has created")
 
+    def add_mail_address(self):
+        """Adding mail channel to database"""
+        mail_address = input("Insert your mail address: ")
+        receiver_name = input("Insert receiver name: ")
+        recevier_surname = input("Insert receiver surname: ")
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("""
+                INSERT OR IGNORE INTO mail_adresses (receiver_name,receiver_surname,receiver_mail)
+                VALUES (?,?,?)
+            """,(receiver_name,recevier_surname,mail_address))
+            conn.commit()
+
+        except Exception as e:
+            conn.rollback()
+            print(f"There is an error: {e}")
+
+        finally:
+            conn.close()
+
+    def delete_mail_address(self):
+        """Delete a mail address from database"""
+        mail_address = input("Enter the mail address: ")
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("""
+                        DELETE FROM mail_adresses
+                        WHERE receiver_mail = ?
+                    """, (mail_address,))
+            conn.commit()
+
+        except Exception as e:
+            conn.rollback()
+            print(f"There is an error: {e}")
+
+        finally:
+            conn.close()
+
     def add_channel(self):
         """Adding your channels"""
         channel_id = input("Insert channel id: ")
@@ -97,5 +139,5 @@ class Database:
 
 """You must run this folder one time for creating database"""
 
-database = Database(DATABASE_PATH, DATABASE_SCHEMA)
-database.creating_database()
+#database = Database(DATABASE_PATH, DATABASE_SCHEMA)
+#database.creating_database()

@@ -30,12 +30,17 @@ if __name__ == "__main__":
             case "1":
                 """Database Operations"""
                 database = Database(DATABASE_PATH, DATABASE_SCHEMA)
-                print("1.Add Channel\n2.Delete Channel")
+                print("1.Add Channel\n2.Delete Channel\n3.Add Receiver\n4.Delete Receiver")
                 a = input("Input decision number:")
-                if a == "1":
-                    database.add_channel()
-                elif a == "2":
-                    database.delete_channel()
+                match a:
+                    case "1":
+                        database.add_channel()
+                    case "2":
+                        database.delete_channel()
+                    case "3":
+                        database.add_mail_address()
+                    case "4":
+                        database.delete_mail_address()
 
             case "2":
                 """Video scraping, sending information from mail, download the videos"""
