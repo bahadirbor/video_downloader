@@ -23,3 +23,10 @@ CREATE TABLE IF NOT EXISTS schedules (
     last_run TIMESTAMP DEFAULT NULL,
     next_run TIMESTAMP NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS mail_adresses(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    receiver_name TEXT,
+    receiver_surname TEXT,
+    receiver_mail TEXT NOT NULL
+);

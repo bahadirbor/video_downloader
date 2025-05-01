@@ -30,12 +30,17 @@ if __name__ == "__main__":
             case "1":
                 """Database Operations"""
                 database = Database(DATABASE_PATH, DATABASE_SCHEMA)
-                print("1.Add Channel\n2.Delete Channel")
+                print("1.Add Channel\n2.Delete Channel\n3.Add Receiver\n4.Delete Receiver")
                 a = input("Input decision number:")
-                if a == "1":
-                    database.add_channel()
-                elif a == "2":
-                    database.delete_channel()
+                match a:
+                    case "1":
+                        database.add_channel()
+                    case "2":
+                        database.delete_channel()
+                    case "3":
+                        database.add_mail_address()
+                    case "4":
+                        database.delete_mail_address()
 
             case "2":
                 """Video scraping, sending information from mail, download the videos"""
@@ -57,12 +62,13 @@ if __name__ == "__main__":
                     exit("Şablon dosyası yüklenemedi, program sonlandırılıyor.")
 
                 channel_id_nums = database.get_channel_ids()
+                receiver_mails = database.get_mail_addresses()
+                print(receiver_mails)
                 for channel_id in channel_id_nums:
                     video_data = mail.fetch_video_data(str(channel_id))
                     if not video_data:
                         exit("Veritabanında video verisi bulunamadı, program sonlandırılıyor.")
-                    mail.send_mail(template, SENDER_MAIL_ADDRESS, SENDER_MAIL_PASSWORD, RECEIVER_MAIL_ADDRESS,
-                                   video_data)
+                    mail.send_mail(template, SENDER_MAIL_ADDRESS, SENDER_MAIL_PASSWORD, receiver_mails, video_data)
 
                 video_ids = download.get_video_id()
 
