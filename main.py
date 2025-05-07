@@ -76,6 +76,12 @@ if __name__ == "__main__":
                     download.download_video(video_id, DOWNLOAD_DIR)
                     database.change_download_status(video_id)
 
+            case "4":
+                download = Download(DATABASE_PATH)
+                video_url = input("Enter your video url: ")
+                video_url = video_url.split("=")[1]
+                download.download_video(video_url, DOWNLOAD_DIR)
+
             case "0":
                 break
 
