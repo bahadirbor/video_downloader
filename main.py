@@ -23,6 +23,7 @@ if __name__ == "__main__":
     while True:
         print("Press 1 for database operations")
         print("Press 2 for starting program")
+        print("Press 3 for download video with video url")
         print("Press 0 for exit")
         decision = input("Make your choice: ")
 
@@ -76,7 +77,7 @@ if __name__ == "__main__":
                     download.download_video(video_id, DOWNLOAD_DIR)
                     database.change_download_status(video_id)
 
-            case "4":
+            case "3":
                 download = Download(DATABASE_PATH)
                 video_url = input("Enter your video url: ")
                 video_url = video_url.split("=")[1]
@@ -84,9 +85,3 @@ if __name__ == "__main__":
 
             case "0":
                 break
-
-
-
-
-
-
