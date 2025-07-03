@@ -1,9 +1,13 @@
 import os
+import importlib.metadata
+import subprocess
+import sys
 from dotenv import load_dotenv
 from source.api_integration import Api
 from source.database import Database
 from source.download import Download
 from mail_section.mail import Mail
+
 
 load_dotenv(dotenv_path="config/.env")
 
@@ -18,7 +22,16 @@ DOWNLOAD_DIR = str(os.getenv("VIDEO_DOWNLOAD_DIR"))
 DATABASE_SCHEMA = str(os.getenv("DATABASE_SCHEMA"))
 
 
+def check_and_update():
+    env = os.environ.copy()
+    env['PIP_DISABLE_PIP_VERSION_CHECK'] = '1'
+    with open("requirements.txt", "r") as libs:
+        for line in libs:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", line])
+
+
 if __name__ == "__main__":
+    check_and_update()
     print("Welcome\n")
     while True:
         print("Press 1 for database operations")
